@@ -1,89 +1,133 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVC Spelling Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+        }
+        .game-container {
+            margin: 50px auto;
+            width: 300px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+        .letter-box {
+            display: inline-block;
+            padding: 10px;
+            margin: 5px;
+            font-size: 20px;
+            background: #ffcc00;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .word-display {
+            margin: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .button {
+            padding: 10px;
+            margin-top: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
 
-const CVC_WORDS = [
-  "cat", "dog", "rat", "bat", "hat", "sun", "pen", "pig", "top", "mop",
-  "mat", "bed", "hit", "hop", "mud", "pat", "ten", "sit", "pot", "run",
-  "bag", "map", "net", "tap", "box", "jam", "fox", "log", "rug", "web",
-  "zip", "yak", "van", "jet", "wig", "lid", "rod", "bud", "chip", "frog",
-  "glad", "snip", "trap", "crab", "black", "brick", "stump", "blend", "lamp", "sand",
-  "clap", "tree", "drum", "brim", "snug", "slug", "trim", "grip", "brush", "crash",
-  "smash", "flash", "cliff", "block", "stack", "crack", "flock", "slump", "trick", "brick",
-  "brisk", "grasp", "crisp", "blimp", "stuck", "prick", "truck", "twist", "plant", "clamp",
-  "brand", "grand", "stand", "flame", "frame", "chest", "crest", "spend", "trend", "blend",
-  "frost", "thrust", "brunt", "grunt", "clump", "stump", "plump", "spout", "blip", "clap",
-  "frog", "grap", "plan", "slip", "snap", "step", "trip", "flop","bird","third","shirt","twirl","first","Clever","Lemon","Tiger","Lion","monkey"
-];
-
-let usedWords = [];
-
-const getRandomWord = () => {
-  if (usedWords.length >= 100) {
-    usedWords = [];
-  }
-  let availableWords = CVC_WORDS.filter(word => !usedWords.includes(word));
-  let randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
-  usedWords.push(randomWord);
-  return randomWord;
-};
-
-const getShuffledLetters = (word) => {
-  return word.split("").sort(() => Math.random() - 0.5);
-};
-
-export default function CVCSpellingGame() {
-  const [currentWord, setCurrentWord] = useState(getRandomWord());
-  const [selectedLetters, setSelectedLetters] = useState([]);
-  const [shuffledLetters, setShuffledLetters] = useState(getShuffledLetters(currentWord));
-
-  const handleLetterClick = (letter) => {
-    setSelectedLetters([...selectedLetters, letter]);
-  };
-
-  const handleCheckAnswer = () => {
-    if (selectedLetters.join("") === currentWord) {
-      alert("Correct! 🎉");
-      const newWord = getRandomWord();
-      setCurrentWord(newWord);
-      setSelectedLetters([]);
-      setShuffledLetters(getShuffledLetters(newWord));
-    } else {
-      alert("Try again! ❌");
-    }
-  };
-
-  const speakWord = () => {
-    const utterance = new SpeechSynthesisUtterance(currentWord);
-    utterance.lang = "en-US";
-    speechSynthesis.speak(utterance);
-  };
-
-  return (
-    <div className="flex flex-col items-center p-6 bg-green-100 min-h-screen">
-      <Card className="p-6 text-center w-80 bg-white shadow-lg rounded-2xl">
-        <h2 className="text-xl font-bold mb-4">Spell the Word</h2>
-        <Button onClick={speakWord} className="mb-4 bg-blue-500 text-white p-2 rounded-lg">
-          🔊 Hear the Word
-        </Button>
-        <CardContent className="flex gap-2 justify-center mb-4">
-          {selectedLetters.map((letter, index) => (
-            <span key={index} className="text-xl font-bold bg-blue-200 p-2 rounded-lg">
-              {letter}
-            </span>
-          ))}
-        </CardContent>
-        <div className="flex gap-2">
-          {shuffledLetters.map((letter, index) => (
-            <Button key={index} onClick={() => handleLetterClick(letter)} className="bg-yellow-500 text-white p-2 rounded-lg">
-              {letter}
-            </Button>
-          ))}
-        </div>
-        <Button onClick={handleCheckAnswer} className="mt-4 bg-green-500 text-white p-2 rounded-lg">
-          ✅ Check Answer
-        </Button>
-      </Card>
+    <div class="game-container">
+        <h2>Spell the Word</h2>
+        <button class="button" onclick="speakWord()">🔊 Hear the Word</button>
+        <div class="word-display" id="selected-word"></div>
+        <div id="letters-container"></div>
+        <button class="button" onclick="checkAnswer()">✅ Check Answer</button>
     </div>
-  );
-}
+
+    <script>
+        let cvcWords = [
+            "cat", "dog", "rat", "bat", "hat", "sun", "pen", "pig", "top", "mop",
+            "mat", "bed", "hit", "hop", "mud", "pat", "ten", "sit", "pot", "run",
+            "bag", "map", "net", "tap", "box", "jam", "fox", "log", "rug", "web",
+            "zip", "yak", "van", "jet", "wig", "lid", "rod", "bud", "chip", "frog",
+            "glad", "snip", "trap", "crab", "black", "brick", "stump", "blend", "lamp", "sand",
+            "clap", "tree", "drum", "brim", "snug", "slug", "trim", "grip", "brush", "crash",
+            "smash", "flash", "cliff", "block", "stack", "crack", "flock", "slump", "trick", "brick",
+            "brisk", "grasp", "crisp", "blimp", "stuck", "prick", "truck", "twist", "plant", "clamp",
+            "brand", "grand", "stand", "flame", "frame", "chest", "crest", "spend", "trend", "blend",
+            "frost", "thrust", "brunt", "grunt", "clump", "stump", "plump", "spout", "blip", "clap",
+            "frog", "grap", "plan", "slip", "snap", "step", "trip", "flop","bird","third","shirt","twirl","first","clever","lemon","tiger","lion","monkey"
+        ];
+        
+        let usedWords = [];
+        let currentWord = "";
+
+        function getRandomWord() {
+            if (usedWords.length >= 40) usedWords = [];
+            let availableWords = cvcWords.filter(word => !usedWords.includes(word));
+            let randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
+            usedWords.push(randomWord);
+            return randomWord;
+        }
+
+        function shuffleLetters(word) {
+            return word.split('').sort(() => Math.random() - 0.5);
+        }
+
+        function initializeGame() {
+            currentWord = getRandomWord();
+            let shuffledLetters = shuffleLetters(currentWord);
+            document.getElementById("selected-word").innerText = "";
+
+            let container = document.getElementById("letters-container");
+            container.innerHTML = "";
+
+            shuffledLetters.forEach(letter => {
+                let span = document.createElement("span");
+                span.classList.add("letter-box");
+                span.innerText = letter;
+                span.onclick = () => selectLetter(letter, span);
+                container.appendChild(span);
+            });
+        }
+
+        function selectLetter(letter, element) {
+            document.getElementById("selected-word").innerText += letter;
+            element.style.display = "none";
+        }
+
+        function checkAnswer() {
+            let selectedWord = document.getElementById("selected-word").innerText;
+            if (selectedWord === currentWord) {
+                alert("Correct! 🎉");
+                initializeGame();
+            } else {
+                alert("Try again! ❌");
+            }
+        }
+
+        function speakWord() {
+            let utterance = new SpeechSynthesisUtterance(currentWord);
+            utterance.lang = "en-US";
+            speechSynthesis.speak(utterance);
+        }
+
+        window.onload = initializeGame;
+    </script>
+
+</body>
+</html>
