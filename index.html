@@ -48,8 +48,8 @@
         .button:hover {
             background: #45a049;
         }
-        .animal-image {
-            width: 100px;
+        .word-image {
+            width: 200px;
             height: auto;
             margin: 10px;
         }
@@ -59,7 +59,7 @@
 
     <div class="game-container">
         <h2>Spell the Word</h2>
-        <img id="animal-image" class="animal-image" src="lion.png" alt="Animal">
+        <img id="word-image" class="word-image" src="default.png" alt="Word Image">
         <button class="button" onclick="speakWord()">🔊 Hear the Word</button>
         <div class="word-display" id="selected-word"></div>
         <div id="letters-container"></div>
@@ -67,27 +67,7 @@
     </div>
 
     <script>
-        let cvcWords = [
-            "cat", "dog", "rat", "bat", "hat", "sun", "pen", "pig", "top", "mop",
-            "mat", "bed", "hit", "hop", "mud", "pat", "ten", "sit", "pot", "run",
-            "bag", "map", "net", "tap", "box", "jam", "fox", "log", "rug", "web",
-            "zip", "yak", "van", "jet", "wig", "lid", "rod", "bud", "chip", "frog",
-            "glad", "snip", "trap", "crab", "black", "brick", "stump", "blend", "lamp", "sand",
-            "clap", "tree", "drum", "brim", "snug", "slug", "trim", "grip", "brush", "crash"
-        ];
-
-        let animalImages = {
-            "cat": "cat.png",
-            "dog": "dog.png",
-            "rat": "rat.png",
-            "bat": "bat.png",
-            "fox": "fox.png",
-            "lion": "lion.png",
-            "tiger": "tiger.png",
-            "frog": "frog.png",
-            "bird": "bird.png"
-        };
-
+        let cvcWords = ["cat", "dog", "rat", "bat", "hat", "sun", "pen", "pig", "top", "mop", "mat", "bed", "hit", "hop", "mud", "pat", "ten", "sit", "pot", "run", "bag", "map", "net", "tap", "box", "jam", "fox", "log", "rug", "web", "zip", "yak", "van", "jet", "wig", "lid", "rod", "bud", "chip", "frog"];
         let usedWords = [];
         let currentWord = "";
 
@@ -101,6 +81,11 @@
 
         function shuffleLetters(word) {
             return word.split('').sort(() => Math.random() - 0.5);
+        }
+
+        function getDynamicImage(word) {
+            let imageUrl = `https://source.unsplash.com/200x200/?${word}`;
+            document.getElementById("word-image").src = imageUrl;
         }
 
         function initializeGame() {
@@ -119,8 +104,7 @@
                 container.appendChild(span);
             });
 
-            let imageElement = document.getElementById("animal-image");
-            imageElement.src = animalImages[currentWord] || "lion.png"; // Default image
+            getDynamicImage(currentWord);
         }
 
         function selectLetter(letter, element) {
@@ -135,7 +119,21 @@
                 initializeGame();
             } else {
                 alert("Try again! ❌");
+                resetGame();
             }
+        }
+
+        function resetGame() {
+            document.getElementById("selected-word").innerText = "";
+            let container = document.getElementById("letters-container");
+            container.innerHTML = "";
+            shuffleLetters(currentWord).forEach(letter => {
+                let span = document.createElement("span");
+                span.classList.add("letter-box");
+                span.innerText = letter;
+                span.onclick = () => selectLetter(letter, span);
+                container.appendChild(span);
+            });
         }
 
         function speakWord() {
