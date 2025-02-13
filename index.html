@@ -48,8 +48,8 @@
         .button:hover {
             background: #45a049;
         }
-        .word-image {
-            width: 150px;
+        .animal-image {
+            width: 100px;
             height: auto;
             margin: 10px;
         }
@@ -59,6 +59,7 @@
 
     <div class="game-container">
         <h2>Spell the Word</h2>
+        <img id="animal-image" class="animal-image" src="lion.png" alt="Animal">
         <button class="button" onclick="speakWord()">🔊 Hear the Word</button>
         <div class="word-display" id="selected-word"></div>
         <div id="letters-container"></div>
@@ -72,15 +73,21 @@
             "bag", "map", "net", "tap", "box", "jam", "fox", "log", "rug", "web",
             "zip", "yak", "van", "jet", "wig", "lid", "rod", "bud", "chip", "frog",
             "glad", "snip", "trap", "crab", "black", "brick", "stump", "blend", "lamp", "sand",
-            "clap", "tree", "drum", "brush", "snug", "slug", "trim", "grip", "brush", "crash",
-            "smash", "flash", "cliff", "block", "stack", "crack", "flock", "slump", "trick", "brick",
-            "brisk", "grasp", "crisp", "bump", "stuck", "prick", "truck", "twist", "plant", "clamp",
-            "brand", "grand", "stand", "flame", "frame", "chest", "crest", "spend", "trend", "blend",
-            "frost", "thrust", "brunt", "grunt", "camp", "stump", "pump", "sprout", "blast", "clap",
-            "wind","rain","window","snow","jacket","zebra","star","moon","bread","sleep","chair","water","paper","pencil","bench","tail","plant","fruit",
-            "frog", "grap", "plan", "slip", "snap", "step", "trip", "flop","bird","third","shirt","twirl","first","clever","lemon","tiger","lion","monkey"
+            "clap", "tree", "drum", "brim", "snug", "slug", "trim", "grip", "brush", "crash"
         ];
-        
+
+        let animalImages = {
+            "cat": "cat.png",
+            "dog": "dog.png",
+            "rat": "rat.png",
+            "bat": "bat.png",
+            "fox": "fox.png",
+            "lion": "lion.png",
+            "tiger": "tiger.png",
+            "frog": "frog.png",
+            "bird": "bird.png"
+        };
+
         let usedWords = [];
         let currentWord = "";
 
@@ -111,6 +118,9 @@
                 span.onclick = () => selectLetter(letter, span);
                 container.appendChild(span);
             });
+
+            let imageElement = document.getElementById("animal-image");
+            imageElement.src = animalImages[currentWord] || "lion.png"; // Default image
         }
 
         function selectLetter(letter, element) {
@@ -125,19 +135,7 @@
                 initializeGame();
             } else {
                 alert("Try again! ❌");
-                resetGame();
             }
-        function resetGame() {
-            document.getElementById("selected-word").innerText = "";
-            let container = document.getElementById("letters-container");
-            container.innerHTML = "";
-            shuffleLetters(currentWord).forEach(letter => {
-                let span = document.createElement("span");
-                span.classList.add("letter-box");
-                span.innerText = letter;
-                span.onclick = () => selectLetter(letter, span);
-                container.appendChild(span);
-            }); 
         }
 
         function speakWord() {
